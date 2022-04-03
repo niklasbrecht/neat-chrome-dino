@@ -200,10 +200,11 @@ def eval_genomes(genomes, config):
             obstacle.update()
             for i, dino in enumerate(dinos):
                 if dino.rect.colliderect(obstacle.rect):
-                    ge[i].fitness -= 1
+                    ge[i].fitness += 1
                     remove(i)
 
         for i, dino in enumerate(dinos):
+            ge[i].fitness += 0.1
             output = nets[i].activate((dino.rect.y, distance(
                 (dino.rect.x, dino.rect.y), obstacle.rect.midtop)))
             if output[0] > 0.5 and dino.rect.y == dino.y_Pos:
@@ -228,8 +229,11 @@ def run(configPath):
         neat.DefaultStagnation,
         configPath
     )
-
+ 
     pop = neat.Population(config)
+    pop.add_reporter(neat.StdOutReporter(True))
+    stats = neat.StatisticsReporter()
+    pop.add_reporter(stats)
     pop.run(eval_genomes, 500)
 
 
